@@ -101,7 +101,7 @@ struct Relational : Expression
 	virtual string ToString(int depth);
 	virtual any Interpret();
 
-	WordType type;
+	TokenType type;
 	Expression* lhs;
 	Expression* rhs;
 };
@@ -110,7 +110,7 @@ struct Arithmetic : Expression
 	virtual string ToString(int depth);
 	virtual any Interpret();
 
-	WordType type;
+	TokenType type;
 	Expression* lhs;
 	Expression* rhs;
 };
@@ -119,7 +119,7 @@ struct Unary : Expression
 	virtual string ToString(int depth);
 	virtual any Interpret();
 
-	WordType type;
+	TokenType type;
 	Expression* sub;
 };
 struct Call : Expression

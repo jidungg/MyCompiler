@@ -1,15 +1,19 @@
-#include "pch.h"
+
 #include "Scanner.h"
+#include <string>
+#include <iostream>
+#include <set>
 
+static wstring::iterator current ;
+extern set<wchar_t> NumberLiteralSet;
+extern set<wchar_t> PunctuatorSet;
 
-static string::iterator current ;
-
-vector<Token> Scanner::Scan(string source)
+vector<Token> Scanner::Scan(wstring source)
 {
 	vector<Token> result;
-	source += '\0';
+	source += L'\0';
 	current = source.begin();
-	while (*current != '\0')
+	while (*current != L'\0')
 	{
 		switch (GetCharType(*current))
 		{
@@ -17,18 +21,20 @@ vector<Token> Scanner::Scan(string source)
 			current++;
 			break;
 		case CharType::NumberLiteral:
-			result.push_back(ScanNumLiteral());
+			result.push_back(ScanNumberLiteral());
 			break;
 		case CharType::StringLiteral:
 			result.push_back(ScanStringLiteral());
 			break;
-		case CharType::IdentifierAndKeyword:
-			result.push_back(ScanIdenltifierAndKeyword());
+		case CharType::Identifier:
+			result.push_back(ScanIdentifier());
 			break;
-		case CharType::OperatorAndPunctuator:
-			result.push_back(ScanOperatorAndPunctuator());
+		case CharType::Korean:
+			result.push_back(ScanKorean());
 			break;
-
+		case CharType::Punctuator:
+			result.push_back(ScanPunctuator());
+			break;
 		case CharType::Unknown:
 		default:
 			cout << "모르는 글자" << endl;
@@ -37,123 +43,124 @@ vector<Token> Scanner::Scan(string source)
 		}
 	}
 	
-	result.push_back({ WordType::EndOfToken });
+	result.push_back({ TokenKind::EndOfToken });
     return result;
 }
-void Scanner::PrintTokenList(vector<Token> tokens)
-{
-	for (auto iter = tokens.begin(); iter != tokens.end(); iter++)
-	{
-		cout.width(20);
-		cout << left<< WordTypeToString[iter->type];
-		cout << "\t" << iter->string << endl;
-
-	}
-}
-CharType Scanner::GetCharType(char c)
+CharType Scanner::GetCharType(wchar_t c)
 {
 	if (' ' == c || '\t' == c || '\n' == c || '\r' == c)
 		return CharType::WhiteSpace;
-	           
-	if ('0' <= c && '9' >= c)
+
+	if (NumberLiteralSet.count(c))
 		return CharType::NumberLiteral;
 
-	if ('\'' == c)
+	if (PunctuatorSet.count(c))
+		return CharType::Punctuator;
+
+	if (L'\"' == c)
 		return CharType::StringLiteral;
 
-	if ('a' <= c && 'z' >= c||
-		'A' <= c && 'Z' >= c)
-		return CharType::IdentifierAndKeyword;
+	if (L'\'' == c)
+		return CharType::Identifier;
 
-	if (('!' <= c && '/' >= c) ||
-		(':' <= c && '@' >= c) ||
-		('[' <= c && '`' >= c) ||
-		('{' <= c && '}' >= c))
-		return CharType::OperatorAndPunctuator;
+	if (0xAC00 <= c && c <= 0xD7A3)
+		return CharType::Korean;
 
 	return CharType::Unknown;
 }
-
-Token Scanner::ScanNumLiteral()
+Token Scanner::ScanNumberLiteral()
 {
-	string string;
-	while (IsCharType(*current, CharType::NumberLiteral) || *current == '.')
+	wstring string;
+	while (IsCharType(*current,CharType::NumberLiteral))
 	{
 		string += *current++;
 	}
-
-	return Token{ WordType::NumberLiteral , string};
+	return Token{ TokenKind::NumberLiteral, string };
 }
 Token Scanner::ScanStringLiteral()
 {
-	string string;
+	wstring string;
 	current++;
 	while (IsCharType(*current, CharType::StringLiteral))
 	{
 		string += *current++;
 	}
-	if ('\'' != *current)
+	if (L'\"' != *current)
 	{
-		cout << "문자열 끝에 \' 가 없습니다." << endl;
+		cout << "문자열 끝에 \" 가 없습니다." << endl;
 		exit(1);
 	}
 	current++; 
-	return Token{ WordType::StringLiteral , string };
+	return Token{ TokenKind::StringLiteral , string };
 }
-Token Scanner::ScanIdenltifierAndKeyword()
+Token Scanner::ScanIdentifier()
 {
-	string string;
-	while (IsCharType(*current, CharType::IdentifierAndKeyword))
+	wstring string;
+	current++;
+	while (IsCharType(*current, CharType::Identifier))
 	{
 		string += *current++;
 	}
-	WordType type = ToWordType(string);
-	if (type == WordType::Unknown)
-		type = WordType::Identifier;
+	if (L'\'' != *current)
+	{
+		cout << "문자열 끝에 \" 가 없습니다." << endl;
+		exit(1);
+	}
+	current++;
+	return Token{ TokenKind::Identifier , string };
+}
+Token Scanner::ScanKorean()
+{
+	wstring string;
+	while (IsCharType(*current, CharType::Korean))
+	{
+		string += *current++;
+	}
+
+	TokenKind type = StrToType(string);
+	if (type == TokenKind::Unknown)
+	{
+		wcout << string << L" 을 알 수 없습니다." << endl;
+		exit(1);
+	}
+		
 	return Token{ type, string };
 	
 }
-Token Scanner::ScanOperatorAndPunctuator()
+
+Token Scanner::ScanPunctuator()
 {
-	string string;
-	while (IsCharType(*current, CharType::OperatorAndPunctuator))
-	{
+	wstring string;
+	while (IsCharType(*current, CharType::Punctuator))
 		string += *current++;
-	}
-	WordType type = WordType::Unknown;
-	while (string.empty() == false && (type = ToWordType(string)) == WordType::Unknown)
-	{
+	while (string.empty() == false && StrToType(string) == TokenKind::Unknown) {
 		string.pop_back();
 		current--;
 	}
-	if (string.empty() || type == WordType::Unknown)
-	{
-		cout << *current << " : 잘못된 연산자입니다." << endl;
+	if (string.empty()) {
+		cout << *current << " 사용할 수 없는 문자입니다.";
 		exit(1);
 	}
-	return Token{ type, string };
+	return Token{ StrToType(string), string };
 }
-bool Scanner::IsCharType(char c, CharType type)
+bool Scanner::IsCharType(wchar_t c, CharType type)
 {
 	switch (type)
 	{
 	case CharType::Unknown:
 		break;
 	case CharType::WhiteSpace:
-		return (' ' == c || '\t' == c || '\n' == c || '\r' == c);
+		return (L' ' == c || L'\t' == c || L'\n' == c || L'\r' == c);
 	case CharType::NumberLiteral:
-		return ('0' <= c && '9' >= c);
+		return (NumberLiteralSet.count(c));
 	case CharType::StringLiteral:
-		return (' ' <= c && '~' >= c && '\'' != c);
-	case CharType::IdentifierAndKeyword:
-		return ('O' <= c && c <= '9' ||
-			'a' <= c && c <= 'z' ||
-			'A' <= c && c <= 'Z');
-	case CharType::OperatorAndPunctuator:
-		return ('!' <= c && '/' >= c) ||
-			(':' <= c && '@' >= c) ||
-			('[' <= c && '`' >= c) ||
-			('{' <= c && '}' >= c);
+		return ((0xAC00 <= c && c <= 0xD7A3) || (32 <= c && c <= 126)) && c != L'\"';
+	case CharType::Identifier:
+		return (0xAC00 <= c && c <= 0xD7A3);
+	case CharType::Korean:
+		return (0xAC00 <= c && c <= 0xD7A3);
+	case CharType::Punctuator:
+		return (PunctuatorSet.count(c));
 	default:
 		return false;
 	}
@@ -161,11 +168,14 @@ bool Scanner::IsCharType(char c, CharType type)
 
 	return false;
 }
-WordType Scanner::ToWordType(string str)
+
+void Scanner::PrintTokenList(vector<Token> tokens)
 {
-	if (StringToWordType.count(str))
+	for (auto iter = tokens.begin(); iter != tokens.end(); iter++)
 	{
-		return StringToWordType[str];
+		wcout.width(20);
+		wcout << left << TypeToStr(iter->type);
+		wcout << L"\t" << iter->string << endl;
+
 	}
-	return WordType::Unknown;
 }
