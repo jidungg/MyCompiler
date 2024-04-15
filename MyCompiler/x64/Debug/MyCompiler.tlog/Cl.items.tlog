@@ -1,7 +1,7 @@
-D:\Workbench\MyCompiler\MyCompiler\Interpreter.cpp;D:\Workbench\MyCompiler\MyCompiler\x64\Debug\Interpreter.obj
-D:\Workbench\MyCompiler\MyCompiler\Node.cpp;D:\Workbench\MyCompiler\MyCompiler\x64\Debug\Node.obj
-D:\Workbench\MyCompiler\MyCompiler\Parser.cpp;D:\Workbench\MyCompiler\MyCompiler\x64\Debug\Parser.obj
-D:\Workbench\MyCompiler\MyCompiler\MyCompiler.cpp;D:\Workbench\MyCompiler\MyCompiler\x64\Debug\MyCompiler.obj
-D:\Workbench\MyCompiler\MyCompiler\Scanner.cpp;D:\Workbench\MyCompiler\MyCompiler\x64\Debug\Scanner.obj
-D:\Workbench\MyCompiler\MyCompiler\Token.cpp;D:\Workbench\MyCompiler\MyCompiler\x64\Debug\Token.obj
-D:\Workbench\MyCompiler\MyCompiler\Types.cpp;D:\Workbench\MyCompiler\MyCompiler\x64\Debug\Types.obj
+C:\Workbench\MyCompiler\MyCompiler\Interpreter.cpp;C:\Workbench\MyCompiler\MyCompiler\x64\Debug\Interpreter.obj
+C:\Workbench\MyCompiler\MyCompiler\Node.cpp;C:\Workbench\MyCompiler\MyCompiler\x64\Debug\Node.obj
+C:\Workbench\MyCompiler\MyCompiler\Parser.cpp;C:\Workbench\MyCompiler\MyCompiler\x64\Debug\Parser.obj
+C:\Workbench\MyCompiler\MyCompiler\MyCompiler.cpp;C:\Workbench\MyCompiler\MyCompiler\x64\Debug\MyCompiler.obj
+C:\Workbench\MyCompiler\MyCompiler\Scanner.cpp;C:\Workbench\MyCompiler\MyCompiler\x64\Debug\Scanner.obj
+C:\Workbench\MyCompiler\MyCompiler\Token.cpp;C:\Workbench\MyCompiler\MyCompiler\x64\Debug\Token.obj
+C:\Workbench\MyCompiler\MyCompiler\Types.cpp;C:\Workbench\MyCompiler\MyCompiler\x64\Debug\Types.obj

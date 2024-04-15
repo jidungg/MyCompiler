@@ -3,6 +3,7 @@
 #include <iostream>
 #include <fstream> 
 #include <cstdlib>
+#include <cstdio>
 
 #include "Scanner.h"
 #include "Parser.h"
@@ -11,44 +12,43 @@
 
 wstring ReadSourceFile(wstring fileName)
 {
- 
-    locale::global(locale(".UTF-8"));
-
-    wifstream fIn;
-    fIn.open(fileName);
-    if (!fIn.is_open()) {
-        wcout << L"파일열기 실패" << endl;
+    FILE* f;
+    
+    auto isOpen = _wfopen_s(&f, fileName.c_str(), L"rt+,ccs=UNICODE");
+    if (isOpen != 0)
+    {
+        cout << "파일 열기 실패";
         exit(1);
     }
 
-    fIn.seekg(0, std::ios::end);
-    streampos len = fIn.tellg();
-    wchar_t* buf = new wchar_t[len];
-    fIn.seekg(0, ios::beg);
 
-    fIn.read(buf, len);
-
-    wstring source(buf);   
-
-    fIn.close();
-    wcout << L"파일에서 와이드 문자열 읽기 완료" << endl;
-    return source;
+    wchar_t* buf;
+    fseek(f,0,SEEK_END);
+    int len = ftell(f);
+    fseek(f, 2, SEEK_SET);
+    buf = new wchar_t[(len +1) / sizeof(wchar_t)];
+    memset(buf, 0, len + 1);
+    fread_s(buf,len,sizeof(wchar_t), len / sizeof(wchar_t), f);
+    //fgetws(buf,len,f);
+    wstring str(buf);
+    return str;
 }
 
 int main()
 {
-    wstring source = ReadSourceFile(L"./Source.txt");
+    wcout.imbue(locale("kor"));
+    wstring source = ReadSourceFile((L"./Source.txt"));
     Scanner scanner;
-    //Parser parser;
+    Parser parser;
     //Interpreter interpreter;
 
     auto tokenList = scanner.Scan(source);
     scanner.PrintTokenList(tokenList);
     cout << "Scan Complete=======================================" << endl;
-  /*  auto syntaxTree = parser.Parse(tokenList);
+    auto syntaxTree = parser.Parse(tokenList);
     parser.PrintSyntaxTree(syntaxTree);
     cout <<"Parse Complete=======================================" << endl;
-    interpreter.Interpret(syntaxTree);
-    cout << "Interpret Complete=======================================" << endl;*/
+   // interpreter.Interpret(syntaxTree);
+    //cout << "Interpret Complete=======================================" << endl;
 }
 

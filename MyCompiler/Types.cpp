@@ -35,11 +35,13 @@ static map<wstring, TokenKind> StringToTokenType =
     {L"반환", TokenKind::Return},
     {L"숫자", TokenKind::NumberVariable},
     {L"문자열", TokenKind::StringVariable},
+    {L"명제", TokenKind::BooleanVariable},
     {L"전역", TokenKind::Static},
     {L"반복", TokenKind::Repetition},
     {L"탈출", TokenKind::Break},
-    {L"건너뛰기", TokenKind::Continue},
+    {L"계속", TokenKind::Continue},
     {L"혹시", TokenKind::If},
+    {L"아니면", TokenKind::Else},
     {L"출력", TokenKind::Print},
 
     {L"그리고", TokenKind::And},
@@ -57,7 +59,7 @@ static map<wstring, TokenKind> StringToTokenType =
     {L"와", TokenKind::With},
     {L"과", TokenKind::With},
     {L"면", TokenKind::Then},
-    {L"동안", TokenKind::Then},
+    {L"동안", TokenKind::Ing},
     {L"보다", TokenKind::Than},
 
     {L"더하기", TokenKind::Add},
@@ -68,10 +70,11 @@ static map<wstring, TokenKind> StringToTokenType =
     {L"감소", TokenKind::Decrease},
     {L"반전", TokenKind::Reverse},
 
-    {L"같다", TokenKind::Equal},
-    {L"다르다", TokenKind::NotEqual},
-    {L"작다", TokenKind::Smaller},
-    {L"크다", TokenKind::Greater},
+    {L"같", TokenKind::Equal},
+    {L"같지않", TokenKind::NotEqual},
+    {L"작", TokenKind::Smaller},
+    {L"크", TokenKind::Greater},
+    {L"다", TokenKind::Terminal},
 
     {L",", TokenKind::Comma},
     {L":", TokenKind::Colon},
@@ -104,6 +107,28 @@ set<wchar_t> NumberLiteralSet =
     L'억',
     L'조',
     L'점',
+};
+map<wchar_t, long long> UnitsMap =
+{
+    {L'십',10},
+    {L'백',100},
+    {L'천',1000},
+    {L'만',10000},
+    {L'억',100000000},
+    {L'조',1000000000000},
+};
+map<wchar_t, int> DigitsMap =
+{
+    {L'영',0},
+    {L'일',1},
+    {L'둘',2},
+    {L'삼',3},
+    {L'사',4},
+    {L'오',5},
+    {L'육',6},
+    {L'칠',7},
+    {L'팔',8},
+    {L'구',9},
 };
 set<wchar_t> PunctuatorSet =
 {
@@ -149,5 +174,76 @@ wstring TypeToStr(TokenKind type) {
     if (TypeToString.count(type))
         return TypeToString.at(type);
     return L"";
+}
+
+bool IsValidNumber(wstring string)
+{
+    if (*string.begin() == L'영')
+    {
+        if (*(string.begin() + 1) != L'점')
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+//영 /일 둘 삼 사 오 육 칠 팔 구 /십 백 천 만 억 조 점
+double StrToNumber(wstring string)
+{
+    int digit  = 0;
+    long long unit = 1;
+    double underDotMultiplier = 10;
+    double result =0;
+
+    auto cur = string.begin();
+    while (cur != string.end())
+    {
+        if (DigitsMap.find(*cur) != DigitsMap.end())
+        {
+            digit = DigitsMap[*cur];
+            cur++;
+            continue;
+        }
+        if (UnitsMap.find(*cur) != UnitsMap.end())
+        {
+            unit = UnitsMap[*cur];
+            cur++;
+            if (cur != string.end())
+            {
+                if (UnitsMap.find(*(cur)) != UnitsMap.end())
+                {
+                    unit *= UnitsMap[*(cur)];
+                    cur++;
+                }
+            }
+            result += digit * unit; 
+            digit = 0;
+            continue;
+        }
+        if(*(string.begin() + 1) != L'점')
+        {
+            cur++;
+           
+            break;
+        }
+        
+        unit = 1;
+    }
+    result += digit;
+
+    //소수점 아래 
+    while (cur != string.end())
+    {
+        if (DigitsMap.find(*cur) != DigitsMap.end())
+        {
+            digit = DigitsMap[*cur];
+            cur++;
+            result += digit / underDotMultiplier;
+            underDotMultiplier *= 10;
+        }
+        
+    }
+    return result;
 }
 

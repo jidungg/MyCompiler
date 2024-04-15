@@ -1,46 +1,48 @@
-//#pragma once
-//#include "Node.h"
-//
-//class Parser
-//{
-//public: 
-//	Program* Parse(vector<Token> tokens);
-//	void PrintSyntaxTree(Program* program);
-//
-//private:
-//	Function* ParseFunction();
-//	vector<Statement*> ParseBlock();
-//	ExpressionStatement* ParseExpressionStatement();
-//	Variable* ParseVariable();
-//	If* ParseIf();
-//	For* ParseFor();
-//	Break* ParseBreak();
-//	Continue* ParseContinue();
-//	Print* ParsePrint();
-//	Expression* ParseExpression();
-//	Expression* ParseAssignment();//1
-//	Expression* ParseOr();//2
-//	Expression* ParseAnd();//3
-//	Expression* ParseRelational(); //관계연산4
-//	Expression* ParsePlusMinus();//산술 +- 5
-//	Expression* ParseMulDivMod();//산술 */% 
-//	Expression* ParseUnary();
-//	Expression* ParsePreUnary();//단항연산자
-//	Expression* ParsePostUnary(Expression* preUnary);//단항연산자
-//	Expression* ParseOperand();
-//	Expression* ParseNullLiteral();
-//	Expression* ParseBooleanLiteral();
-//	Expression* ParseNumberLiteral();
-//	Expression* ParseStringLiteral();
-//	Expression* ParseListLiteral();
-//	Expression* ParseMapLiteral();
-//	Expression* ParseIdentifier();
-//	Expression* ParseInnerExpression();
-//	Expression* ParsePostfix(Expression* sub);
-//	Expression* ParseCall(Expression* sub);
-//	Expression* ParseElement(Expression* sub);
-//
-//	void SkipCurrent(TokenType type);
-//	bool SkipCurrentIf(TokenType type);
-//};
-//
+#pragma once
+#include "Node.h"
+#include "Token.h"
+#include <vector>
+
+class Parser
+{
+public: 
+	Program* Parse(vector<Token> tokens);
+	void PrintSyntaxTree(Program* program);
+
+private:
+	Function* ParseFunction();
+	Parameter* PareseParameter();
+	vector<Statement*> ParseBlock();
+	ExpressionStatement* ParseExpressionStatement();
+	Variable* ParseStaticVariable();
+	Variable* ParseNumberVariable();
+	Variable* ParseStringVariable();
+	If* ParseIf();
+	While* ParseWhile();
+	Break* ParseBreak();
+	Continue* ParseContinue();
+	Return* ParseReturn();
+	Print* ParsePrint();
+	Expression* ParseExpression();
+	Expression* ParseAssignment();//은 는1
+	Expression* ParseOr();//거나 2
+	Expression* ParseAnd();//보다 3
+	Expression* ParseRelational(); //관계연산4
+	Expression* ParsePlusMinus();//산술 +- 5
+	Expression* ParseMulDiv();//산술 */
+	Expression* ParseUnary();
+	Expression* ParseOperand();
+	Expression* ParseNullLiteral();
+	Expression* ParseBooleanLiteral();
+	Expression* ParseNumberLiteral();
+	Expression* ParseStringLiteral();
+	Expression* ParseIdentifier();
+	Expression* ParseInnerExpression();
+	Expression* ParsePostfix(Expression* sub);
+	Expression* ParseCall();
+	Expression* ParseElement(Expression* sub);
+
+	void SkipCurrent(TokenKind type);
+	bool SkipCurrentIf(TokenKind type);
+};
+

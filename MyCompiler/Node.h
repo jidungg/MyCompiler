@@ -1,147 +1,159 @@
 #pragma once
 #include <any>
+#include <map>
+#include <vector>
+#include <list>
+#include <string>
+#include "Types.h"
 
+using namespace std;
 struct Statement
 {
-	virtual string ToString(int depth) abstract;
-	virtual void Interpret() abstract;
+	virtual wstring ToString(int depth) abstract;
+	//virtual void Interpret() abstract;
 };
 struct Expression
 {
-	virtual string ToString(int depth) abstract;
-	virtual any Interpret()	abstract;
+	virtual wstring ToString(int depth) abstract;
+	//virtual any Interpret()	abstract;
+};
+struct Parameter : Statement
+{
+	virtual wstring ToString(int depth);
+	bool isNumber = false;
+	wstring name;
 };
 struct Function : Statement
 {
-	virtual string ToString(int depth);
-	virtual void Interpret();
+	virtual wstring ToString(int depth);
+	//virtual void Interpret();
 
-	string name;
-	vector<string> parameters;
+	wstring name;
+	vector<Parameter*> parameters;
 	vector<Statement*> block;
 };
 struct Return :Statement
 {
-	virtual string ToString(int depth);
-	virtual void Interpret();
+	virtual wstring ToString(int depth);
+	//virtual void Interpret();
 
 	Expression* expression;
 };
 struct Variable : Statement
 {
-	virtual string ToString(int depth);
-	virtual void Interpret();
+	virtual wstring ToString(int depth);
+	//virtual void Interpret();
 
-	string name;
+	bool isStatic = false;
+	bool isNumber = false;
+	wstring name;
 	Expression* expression;
 };
-struct For : Statement
+struct While : Statement
 {
-	virtual string ToString(int depth);
-	virtual void Interpret();
+	virtual wstring ToString(int depth);
+	//virtual void Interpret();
 
-	vector<Variable*> variables;
 	Expression* condition;
-	vector<Expression*> expressions;
 	vector<Statement*> block;
 };
 struct If : Statement
 {
-	virtual string ToString(int depth);
-	virtual void Interpret();
+	virtual wstring ToString(int depth);
+	//virtual void Interpret();
 
-	vector<Expression*> conditions;
-	vector<vector<Statement*>> blocks;
+	Expression* condition;
+	vector<Statement*> block;
 	vector<Statement*> elseblock;
 };
 struct Print : Statement
 {
-	virtual string ToString(int depth);
-	virtual void Interpret();
+	virtual wstring ToString(int depth);
+	//virtual void Interpret();
 
 	bool lineFeed = false;
 	vector<Expression*> expressions;
 };
 struct Break : Statement
 {
-	virtual string ToString(int depth);
-	virtual void Interpret();
+	virtual wstring ToString(int depth);
+	//virtual void Interpret();
 
 };
 struct Continue : Statement
 {
-	virtual string ToString(int depth);
-	virtual void Interpret();
+	virtual wstring ToString(int depth);
+	//virtual void Interpret();
 };
 struct ExpressionStatement : Statement
 {
-	virtual string ToString(int depth);
-	virtual void Interpret();
+	virtual wstring ToString(int depth);
+	//virtual void Interpret();
 
 	Expression* expression;
 };
 struct Or : Expression
 {
-	virtual string ToString(int depth);
-	virtual any Interpret();
+	virtual wstring ToString(int depth);
+	//virtual any Interpret();
 
 	Expression* lhs;
 	Expression* rhs;
 };
 struct And : Expression
 {
-	virtual string ToString(int depth);
-	virtual any Interpret();
+	virtual wstring ToString(int depth);
+	//virtual any Interpret();
 
 	Expression* lhs;
 	Expression* rhs;
 };
 struct Relational : Expression
 {
-	virtual string ToString(int depth);
-	virtual any Interpret();
+	virtual wstring ToString(int depth);
+	//virtual any Interpret();
 
-	TokenType type;
+	TokenKind type;
 	Expression* lhs;
 	Expression* rhs;
 };
 struct Arithmetic : Expression
 {
-	virtual string ToString(int depth);
-	virtual any Interpret();
+	virtual wstring ToString(int depth);
+	//virtual any Interpret();
 
-	TokenType type;
+	TokenKind type;
 	Expression* lhs;
 	Expression* rhs;
 };
 struct Unary : Expression
 {
-	virtual string ToString(int depth);
-	virtual any Interpret();
+	virtual wstring ToString(int depth);
+	//virtual any Interpret();
 
-	TokenType type;
+	TokenKind type;
 	Expression* sub;
 };
 struct Call : Expression
 {
-	virtual string ToString(int depth);
-	virtual any Interpret();
+	virtual wstring ToString(int depth);
+	//virtual any Interpret();
 
 	Expression* sub;
 	vector<Expression*> arguments;
 };
 struct GetElement : Expression
 {
-	virtual string ToString(int depth);
-	virtual any Interpret();
+	virtual wstring ToString(int depth);
+	//virtual any Interpret();
 
 	Expression* sub;
 	Expression* index;
 };
 struct SetElement : Expression
 {
-	virtual string ToString(int depth);
-	virtual any Interpret();
+	virtual wstring ToString(int depth);
+	//virtual any Interpret();
 
 	Expression* sub;
 	Expression* index;
@@ -149,64 +161,52 @@ struct SetElement : Expression
 };
 struct GetVariable : Expression
 {
-	virtual string ToString(int depth);
-	virtual any Interpret();
+	virtual wstring ToString(int depth);
+	//virtual any Interpret();
 
-	string name;
+	wstring name;
 };
 struct SetVariable : Expression
 {
-	virtual string ToString(int depth);
-	virtual any Interpret();
+	virtual wstring ToString(int depth);
+	//virtual any Interpret();
 
-	string name;
+	wstring name;
 	Expression* value;
 };
 struct NullLiteral : Expression 
 {
-	virtual string ToString(int depth);
-	virtual any Interpret();
+	virtual wstring ToString(int depth);
+	//virtual any Interpret();
 };
 struct BooleanLiteral : Expression {
-	virtual string ToString(int depth);
-	virtual any Interpret();
+	virtual wstring ToString(int depth);
+	//virtual any Interpret();
 
 	bool value = false;
 };
 struct NumberLiteral : Expression
 {
-	virtual string ToString(int depth);
-	virtual any Interpret();
+	virtual wstring ToString(int depth);
+	//virtual any Interpret();
 
 	double  value = 0.0;
 };
 struct StringLiteral : Expression
 {
-	virtual string ToString(int depth);
-	virtual any Interpret();
+	virtual wstring ToString(int depth);
+	//virtual any Interpret();
 
-	string value;
+	wstring value;
 };
-struct ArrayLiteral : Expression
-{
-	virtual string ToString(int depth);
-	virtual any Interpret();
 
-	vector<Expression*> values;
-};
-struct MapLiteral : Expression
-{
-	virtual string ToString(int depth);
-	virtual any Interpret();
-
-	map<string, Expression*> values;
-};
 struct Program
 {
-	virtual string ToString(int depth);
-	virtual void Interpret();
+	virtual wstring ToString(int depth);
+	//virtual void Interpret();
 
 	vector<Function*> functions;
+	vector<Variable*> staticVariables;
 };
 
 class Node

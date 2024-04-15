@@ -1,3 +1,8 @@
-﻿D:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(531,5): warning MSB8028: 중간 디렉터리(x64\Debug\)에 다른 프로젝트(Scanner.vcxproj)에서 공유하는 파일이 포함되어 있습니다.  이로 인해 잘못된 정리 및 다시 빌드 동작이 수행될 수 있습니다.
-  Types.cpp
-  MyCompiler.vcxproj -> D:\Workbench\MyCompiler\x64\Debug\MyCompiler.exe
+﻿C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(531,5): warning MSB8028: 중간 디렉터리(x64\Debug\)에 다른 프로젝트(Scanner.vcxproj)에서 공유하는 파일이 포함되어 있습니다.  이로 인해 잘못된 정리 및 다시 빌드 동작이 수행될 수 있습니다.
+  Interpreter.cpp
+  MyCompiler.cpp
+  Node.cpp
+  Parser.cpp
+C:\Workbench\MyCompiler\MyCompiler\Parser.cpp(519,9): warning C4065: switch문에 'default'가 있으나 'case' 레이블이 없습니다.
+  코드를 생성하고 있습니다...
+  MyCompiler.vcxproj -> C:\Workbench\MyCompiler\x64\Debug\MyCompiler.exe

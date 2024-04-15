@@ -25,9 +25,9 @@ enum class TokenKind
     Identifier, Static,
 
     Function, Return, 
-    NumberVariable, StringVariable,
+    NumberVariable, StringVariable, BooleanVariable,
     Repetition, Break, Continue,
-    If, Then,
+    If, Then, Else,
     Print,
 
     Or, // ~거나
@@ -37,6 +37,8 @@ enum class TokenKind
     Object,// 을 를
     With, //와 과
     Than, //~보다
+    Ing, // ~동안
+    Terminal, // ~다
 
     Add, Subtract, Multiply, Divide,
     Increase, Decrease,
@@ -45,12 +47,13 @@ enum class TokenKind
     Smaller, Greater,
 
     Comma, Colon, Period,
-    LeftParen, RightParen,
-    LeftBrace, RightBrace,
-    LeftBraket, RightBraket,
+    LeftParen, RightParen,//()
+    LeftBrace, RightBrace,//{}
+    LeftBraket, RightBraket,//[]
 };
 
 
 
 TokenKind StrToType(wstring string);
 wstring TypeToStr(TokenKind type);
+double StrToNumber(wstring string);

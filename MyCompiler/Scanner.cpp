@@ -13,7 +13,7 @@ vector<Token> Scanner::Scan(wstring source)
 	vector<Token> result;
 	source += L'\0';
 	current = source.begin();
-	while (*current != L'\0')
+	while (*current != '\0')
 	{
 		switch (GetCharType(*current))
 		{
@@ -112,12 +112,18 @@ Token Scanner::ScanIdentifier()
 Token Scanner::ScanKorean()
 {
 	wstring string;
+	TokenKind type;
 	while (IsCharType(*current, CharType::Korean))
 	{
 		string += *current++;
+		type = StrToType(string);
+		if (type != TokenKind::Unknown)
+		{
+			return Token{ type, string };
+		}
 	}
 
-	TokenKind type = StrToType(string);
+	type = StrToType(string);
 	if (type == TokenKind::Unknown)
 	{
 		wcout << string << L" 을 알 수 없습니다." << endl;
@@ -164,8 +170,6 @@ bool Scanner::IsCharType(wchar_t c, CharType type)
 	default:
 		return false;
 	}
-
-
 	return false;
 }
 
@@ -176,6 +180,5 @@ void Scanner::PrintTokenList(vector<Token> tokens)
 		wcout.width(20);
 		wcout << left << TypeToStr(iter->type);
 		wcout << L"\t" << iter->string << endl;
-
 	}
 }
